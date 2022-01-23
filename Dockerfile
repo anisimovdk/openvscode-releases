@@ -7,7 +7,7 @@ RUN apt update && \
 WORKDIR /home/
 
 ARG RELEASE_TAG
-ARG RELEASE_ORG="gitpod-io"
+ARG RELEASE_ORG="made0with0care"
 ARG OPENVSCODE_SERVER_ROOT="/home/.openvscode-server"
 
 # Downloading the latest VSC Server release and extracting the release archive

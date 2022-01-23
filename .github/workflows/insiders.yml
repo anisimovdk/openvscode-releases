@@ -26,15 +26,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          repository: "gitpod-io/openvscode-server"
+          repository: "${{ github.repository_owner }}/openvscode-server"
           ref: ${{ env.UPDATE_BRANCH }}
           fetch-depth: 0
           token: ${{ secrets.VSCODE_GITHUB_TOKEN }}
 
       - name: Configure git credentials
         run: |
-          git config user.name Jean Pierre
-          git config user.email jeanpierre@gitpod.io
+          git config user.name Dmitry K. Anisimov
+          git config user.email mail@anisimov.dk
 
       - name: Setup Build Environment
         run: |
@@ -115,7 +115,7 @@ jobs:
         with:
           name: upstream_commit
           path: __upstream_commit.txt
-      
+
       # Store HEAD commit to make a insiders release (release.yml)
       - name: Write the release commit to a file
         if: ${{ success() }}
@@ -127,7 +127,7 @@ jobs:
         with:
           name: release_commit
           path: __release_commit.txt
-      
+
       - name: Upload logs files
         if: ${{ failure() && (steps.runSmokeTests.outcome == 'failure' || steps.runIntegrationTests.outcome == 'failure') }}
         uses: actions/upload-artifact@v2
@@ -135,9 +135,9 @@ jobs:
           name: logs-linux-x64
           path: .build/logs
 
-      - name: Slack Notification
-        if: always()
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_COLOR: ${{ job.status }}
+      # - name: Slack Notification
+      #   if: always()
+      #   uses: rtCamp/action-slack-notify@v2
+      #   env:
+      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      #     SLACK_COLOR: ${{ job.status }}

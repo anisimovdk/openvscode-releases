@@ -13,16 +13,16 @@ jobs:
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v2
-      
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-      
+
       - name: Set Version and Quality
         run: |
-          echo "VERSION=$(echo ${{ github.event.inputs.release_tag }} | sed -nre 's/^[^0-9]*(([0-9]+\.)*[0-9]+).*/\1/p')" >> $GITHUB_ENV        
+          echo "VERSION=$(echo ${{ github.event.inputs.release_tag }} | sed -nre 's/^[^0-9]*(([0-9]+\.)*[0-9]+).*/\1/p')" >> $GITHUB_ENV
           quality=$([[ ${{ github.event.inputs.release_tag }} =~ insiders ]] && echo "insiders" || echo "stable")
           echo "QUALITY=$quality" >> $GITHUB_ENV
 
@@ -31,18 +31,18 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: |
-            gitpod/openvscode-server
+            ${{ secrets.DOCKERHUB_USERNAME }}/openvscode-server
           tags: |
             type=semver,pattern={{version}},value=v${{ env.VERSION }},enable=${{ env.QUALITY == 'stable' }}
             type=raw,value=insiders,enable=${{ env.QUALITY == 'insiders' }}
             type=raw,value=nightly,enable=${{ env.QUALITY == 'insiders' }}
-      
+
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      
+
       - name: Build and push
         uses: docker/build-push-action@v2
         with:

@@ -55,7 +55,7 @@ jobs:
             let releaseBranch = undefined;
             try {
               const response = await github.rest.repos.getBranch({
-                owner: 'gitpod-io',
+                owner: 'anisimovdk',
                 repo: 'openvscode-server',
                 branch: nextRelease
               });
@@ -67,14 +67,14 @@ jobs:
             // If we already created the release branch in openvscode-server, don't create a notification
             return releaseBranch ? false : true;
 
-      - name: Slack Notification
-        if: steps.new-release.outputs.result == 'true'
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_COLOR: ${{ job.status }}
-          SLACK_TITLE: New vscode release branch created
-          SLACK_MESSAGE: 'Start preparing for a new release :exclamation:'
+      # - name: Slack Notification
+      #   if: steps.new-release.outputs.result == 'true'
+      #   uses: rtCamp/action-slack-notify@v2
+      #   env:
+      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      #     SLACK_COLOR: ${{ job.status }}
+      #     SLACK_TITLE: New vscode release branch created
+      #     SLACK_MESSAGE: 'Start preparing for a new release :exclamation:'
 
   notify-recovery-release:
     runs-on: ubuntu-latest
@@ -113,7 +113,7 @@ jobs:
               // Look for the last sync commit from upstream. For now just query it once
               // as it's unlikely that we are more than 100 commits ahead of upstream
               const response = await github.rest.repos.listCommits({
-                owner: 'gitpod-io',
+                owner: 'anisimovdk',
                 repo: 'openvscode-server',
                 sha: currentRelease,
                 per_page: 100,
@@ -161,11 +161,11 @@ jobs:
 
             return newCommits.length > 0 ? true : false;
 
-      - name: Slack Notification
-        if: steps.new-release.outputs.result == 'true'
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_COLOR: ${{ job.status }}
-          SLACK_TITLE: New commits on latest release branch
-          SLACK_MESSAGE: 'Start preparing for a new recovery release :exclamation:'
+      # - name: Slack Notification
+      #   if: steps.new-release.outputs.result == 'true'
+      #   uses: rtCamp/action-slack-notify@v2
+      #   env:
+      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      #     SLACK_COLOR: ${{ job.status }}
+      #     SLACK_TITLE: New commits on latest release branch
+      #     SLACK_MESSAGE: 'Start preparing for a new recovery release :exclamation:'

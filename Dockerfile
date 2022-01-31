@@ -1,7 +1,7 @@
 FROM ubuntu:18.04
 
 RUN apt update && \
-    apt install -y git wget sudo && \
+    apt install -y git wget sudo curl && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /home/
@@ -44,6 +44,21 @@ RUN chmod g+rw /home && \
     mkdir -p /home/workspace && \
     chown -R $USERNAME:$USERNAME /home/workspace && \
     chown -R $USERNAME:$USERNAME ${OPENVSCODE_SERVER_ROOT}
+
+# Install latest version of Golang
+ARG GO_VER=1.17.6
+RUN arch=$(uname -m) && \
+    if [ "${arch}" = "x86_64" ]; then \
+        arch="amd64"; \
+    elif [ "${arch}" = "aarch64" ]; then \
+        arch="arm64"; \
+    elif [ "${arch}" = "armv7l" ]; then \
+        arch="armv6l"; \
+    fi && \
+    wget "https://go.dev/dl/go${GO_VER}.linux-${arch}.tar.gz" && \
+    tar -C /usr/local -xzf go${GO_VER}.linux-${arch}.tar.gz && \
+    echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/profile && \
+    rm -rf go${GO_VER}.linux-${arch}.tar.gz
 
 USER $USERNAME
 
